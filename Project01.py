@@ -134,9 +134,9 @@ while True:
 #---------------------------------------------------------------------------------------------------------------------------------
     #receitas e despesas
     elif escolha0 == 1:
-        os.system("cls")
-        print("===== RECEITAS E DESPESAS=====\n1 - Adicionar receita\n2 - Adicionar despesa\n3 - Editar registros\n4 - Excluir registros\n5 - Visualizar em tabela\n6 - sair\n")
         while True:
+            os.system("cls")
+            print("===== RECEITAS E DESPESAS=====\n1 - Adicionar receita\n2 - Adicionar despesa\n3 - Editar registros\n4 - Excluir registros\n5 - Visualizar em tabela\n6 - sair\n")
             try:
                 escolha1 = int(input("Digite a Opcão: "))
             except ValueError:
@@ -210,16 +210,16 @@ while True:
                 if pergunta_alimentacao == "SIM":
                     tipo_alimentacao = input("Digite o tipo de alimentação: ")
                     add_gasto_alimentacao = float(input("digite o gasto: "))
-                    dada_gasto_alimentacao = input("digite a data DD/MM/AAAA: ")
-                    novo_valor_aliemtacao = teto_alimentacao - add_gasto_alimentacao
-                    teto_alimentacao = novo_valor_aliemtacao
+                    data_gasto_alimentacao = input("digite a data DD/MM/AAAA: ")
+                    novo_valor_alimentacao = teto_alimentacao - add_gasto_alimentacao
+                    teto_alimentacao = novo_valor_alimentacao
                     despesas.append({
                         "descricao": tipo_alimentacao,
                         "valor": add_gasto_alimentacao,
                         "categoria": "Alimentação",
-                        "data": dada_gasto_alimentacao
+                        "data": data_gasto_alimentacao
                     })
-                    print(f"\n {dada_gasto_alimentacao} --> {tipo_alimentacao} --> {add_gasto_alimentacao}")
+                    print(f"\n {data_gasto_alimentacao} --> {tipo_alimentacao} --> {add_gasto_alimentacao}")
                     input("\nPressione Enter para voltar ao menu...")
                     os.system("cls")
                     break
@@ -574,6 +574,7 @@ while True:
                                 seta = "↓ Redução"
                             else:
                                 seta = "= Estavel"
+                            print(f"{mes_anterior} -> {mes_atual}: {seta} (R$ {valor_anterior:.2f} -> R$ {valor_atual:.2f})")
                 input("\nPressione Enter para voltar ao menu ... ")
                 os.system("cls")
 
@@ -585,6 +586,10 @@ while True:
                     print("===== Percentual gasto por categoria =====")
                     lista_categorias = ["Alimentação", "Transporte", "Moradia", "Saúde", "Educação", "Lazer", "Outros"] 
                     for cat in lista_categorias:
+                        total_cat = 0
+                        for d in despesas:
+                            if d["categoria"] == cat:
+                                total_cat += d["valor"]
                         if total_cat > 0:
                             percentual = (total_cat/total_geral) *100
                             print(f"{cat} : R$ {total_cat:.2f} ({percentual:.1f} %)")
@@ -619,10 +624,11 @@ while True:
                 if len(orcamentos) == 0:
                     print("Nenhum orcamento definido ainda --> Vá em 'planejamento mensl' e adicione ")
                 else:
-                    encontrou = True
+                    encontrou = False
                     for cat, teto in orcamentos.items():
                         gasto_atual = total_por_categoria(cat)
                         if gasto_atual > teto:
+                            encontrou = True
                             print(f"↑ {cat}: gasto de R$ {gasto_atual:.2f} ultrapassou o orçamento de R$ {teto:.2f} (excedeu em R$ {gasto_atual - teto:.2f})")
                     if not encontrou:
                         print("\nNehuma categoria ultrapassou o orçamento✅")
@@ -635,7 +641,7 @@ while True:
                 else:
                     pior_cat = None
                     pior_percentual = 0
-                    for cat, teto in orcamentos.itens():
+                    for cat, teto in orcamentos.items():
                         if teto > 0:
                             percentual = (total_por_categoria(cat)/teto) * 100
                             if percentual > pior_percentual:
